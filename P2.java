@@ -1,3 +1,8 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 // On my honor:
 //
 // - I have not used source code obtained from another student,
@@ -29,8 +34,41 @@ public class P2 {
 	// TODO Add member fields
 	
 	public static void main(String[] args) {
+				
+		// Check for proper usage
+		if (args.length != 1) {
+			System.out.println("Usage:");
+			System.out.println("P2 COMMAND_FILE");
+			System.exit(0);
+		}
 		
-		// TODO Add command line argument processing
+		String fileName = args[0];
+		
+		// Main command line reading
+		try {
+			
+			// Attempt to open the input file into a buffered reader
+			BufferedReader in = new BufferedReader(new FileReader(fileName));
+			
+			String line;
+			
+			while ((line = in.readLine()) != null) {
+				System.out.println(line);
+			}
+			
+			System.out.println("EOF");
+			
+			in.close();
+		}  catch (FileNotFoundException e) {
+			System.out.println("The input file could not be found.");
+			System.exit(0);
+		} catch (IOException e) {
+			System.out.println("Error reading from file.");
+			System.exit(0);
+		} catch (Exception e) {
+			System.out.println("Incorrect file formatting.");
+			System.exit(0);
+		}
 		
 		// TODO Add file handling and reading
 		

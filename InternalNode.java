@@ -5,7 +5,7 @@
  * to signify the end of the sequence, AKA an exact match thus far).
  *
  */
-public class InternalNode implements DNATreeNode {
+public class InternalNode extends DNATreeNode {
 	/**
 	 * Five references to the nodes that are held within this InternalNode.
 	 * They can be either InternalNodes or LeafNodes.
@@ -13,15 +13,18 @@ public class InternalNode implements DNATreeNode {
 	private DNATreeNode a, c, g, t, end;
 	
 	/**
-	 * Constructor that initializes all nodes as LeafNode objects with no
-	 * sequence stored.
+	 * Constructor that initializes all nodes to the empty flyweight node.
+	 * @param fw - the empty flyweight node in the tree
+	 * @param level - the level of the node
 	 */
-	public InternalNode() {
-		a = new LeafNode(null);
-		c = new LeafNode(null);
-		g = new LeafNode(null);
-		t = new LeafNode(null);
-		end = new LeafNode(null);
+	public InternalNode(FlyweightNode fw, int level) {
+		a = fw;
+		c = fw;
+		g = fw;
+		t = fw;
+		end = fw;
+		
+		setLevel(level);
 	}
 	
 	/**

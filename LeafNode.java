@@ -3,7 +3,7 @@
  * that represents the DNA sequence (can be null for empty leaf nodes).
  *
  */
-public class LeafNode implements DNATreeNode {
+public class LeafNode extends DNATreeNode {
 	/**
 	 * String variable that holds the DNA sequence.
 	 */
@@ -13,9 +13,12 @@ public class LeafNode implements DNATreeNode {
 	 * Constructor that initializes the given sequence as the sequence
 	 * of this node.
 	 * @param seq - the DNA sequence
+	 * @param level - the level of the node
 	 */
-	public LeafNode(String seq) {
+	public LeafNode(String seq, int level) {
 		sequence = seq;
+		
+		setLevel(level);
 	}
 	
 	/**

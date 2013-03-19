@@ -93,7 +93,7 @@ public class P2 {
 				if (line.matches(INSERT_PATTERN)) {
 					
 					// Parse out the sequence from the command line
-					int index = Math.max(line.indexOf("r"), line.indexOf("R")) + 1;
+					int index = Math.max(line.indexOf("r"), line.indexOf("R")) + 2;
 					String sequence = line.substring(index);
 					sequence = sequence.trim();
 					
@@ -107,7 +107,7 @@ public class P2 {
 				} else if (line.matches(REMOVE_PATTERN)) {
 					
 					// Parse out the sequence from the command line
-					int index = Math.max(line.indexOf("e"), line.indexOf("E"));
+					int index = Math.max(line.indexOf("e"), line.indexOf("E")) + 1;
 					String sequence = line.substring(index);
 					sequence = sequence.trim();
 					
@@ -130,7 +130,7 @@ public class P2 {
 				} else if (line.matches(SEARCH_PATTERN)) {
 					
 					// Parse out the sequence from the command line
-					int index = Math.max(line.indexOf("h"), line.indexOf("H"));
+					int index = Math.max(line.indexOf("h"), line.indexOf("H")) + 1;
 					String sequence = line.substring(index);
 					sequence = sequence.trim();
 					

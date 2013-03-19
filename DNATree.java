@@ -220,7 +220,7 @@ public class DNATree {
 				int[] letters = new int[4];
 				double[] frequencies = new double[4];
 
-				for (char c : sequence.toCharArray()) {
+				for (char c : sequence.toLowerCase().toCharArray()) {
 					if (c == 'a') {
 						letters[0]++;
 					} else if (c == 'c') {

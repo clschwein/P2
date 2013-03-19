@@ -1,3 +1,5 @@
+import java.text.DecimalFormat;
+
 /**
  * DNA Tree class for Project 2.
  * 
@@ -187,11 +189,14 @@ public class DNATree {
 					frequencies[i] = letters[i] / sequence.length();
 				}
 				
+				
+				DecimalFormat decim = new DecimalFormat("0.00");
+				
 				output += ": ";
-				output += "A(" + frequencies[0] + "), ";
-				output += "C(" + frequencies[1] + "), ";
-				output += "G(" + frequencies[2] + "), ";
-				output += "T(" + frequencies[3] + ")";
+				output += "A(" + decim.format(frequencies[0]) + "), ";
+				output += "C(" + decim.format(frequencies[1]) + "), ";
+				output += "G(" + decim.format(frequencies[2]) + "), ";
+				output += "T(" + decim.format(frequencies[3]) + ")";
 			}
 		} else {
 			output += "I";

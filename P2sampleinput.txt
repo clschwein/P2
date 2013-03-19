@@ -10,6 +10,17 @@ insert AA
 print
 insert                 AAACCCCGGTGAAAACGTA
 print
+
+
+
+
+
+search AA$
+
+
+
+
+
 insert       ACTGGGAA          
 print
 remove       ACGT         

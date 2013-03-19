@@ -410,16 +410,16 @@ public class DNATree {
 			}
 
 			if (exact) {
-				if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count + 1)) instanceof LeafNode) {
-					output += "Sequence: " + ((LeafNode)focus.getNode(pattern.charAt(count + 1))).getSequence();
+				if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count)) instanceof LeafNode) {
+					output += "Sequence: " + ((LeafNode)focus.getNode(pattern.charAt(count))).getSequence();
 				} else {
 					output += "No sequence found";
 				}
 			} else {
-				if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count + 1)) instanceof LeafNode) {
-					output += "Sequence: " + ((LeafNode)focus.getNode(pattern.charAt(count + 1))).getSequence();
-				} else if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count + 1)) instanceof InternalNode) {
-					output += printAllLeafNodes((InternalNode)focus.getNode(pattern.charAt(count + 1)), visited);
+				if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count)) instanceof LeafNode) {
+					output += "Sequence: " + ((LeafNode)focus.getNode(pattern.charAt(count))).getSequence();
+				} else if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count)) instanceof InternalNode) {
+					output += printAllLeafNodes((InternalNode)focus.getNode(pattern.charAt(count)), visited);
 				} else {
 					output += "No sequence found";
 				}

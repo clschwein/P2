@@ -44,12 +44,12 @@ public class P2 {
 	 * lowercase commands or sequences, and any number of spacing
 	 * between arguments.
 	 */
-	private static final String INSERT_PATTERN = "^ *(insert|INSERT) *[ACGTacgt]+ *$";
-	private static final String REMOVE_PATTERN = "^ *(remove|REMOVE) *[ACGTacgt]+ *$";
+	private static final String INSERT_PATTERN = "^ *(insert|INSERT) *[ACGT]+ *$";
+	private static final String REMOVE_PATTERN = "^ *(remove|REMOVE) *[ACGT]+ *$";
 	private static final String PRINT_PATTERN = "^ *(print|PRINT) *$";
 	private static final String PRINT_LENGTHS_PATTERN = "^ *(print|PRINT) *(lengths|LENGTHS) *$";
 	private static final String PRINT_STATS_PATTERN = "^ *(print|PRINT) *(stats|STATS) *$";
-	private static final String SEARCH_PATTERN = "^ *(search|SEARCH) *[ACGTacgt]+($)? *$";
+	private static final String SEARCH_PATTERN = "^ *(search|SEARCH) *[ACGT]+[$]? *$";
 	
 	/**
 	 * Member field for DNATree tree.  This tree represents the
@@ -65,8 +65,7 @@ public class P2 {
 	 * from the input file, executing and outputting commands
 	 * along the way.
 	 * 
-	 * @param args
-	 * 				the command line arguments
+	 * @param args - the command line arguments
 	 */
 	public static void main(String[] args) {
 				

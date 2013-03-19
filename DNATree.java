@@ -1,44 +1,79 @@
 import java.text.DecimalFormat;
 
 /**
- * DNA Tree class for Project 2.
+ * DNA Tree class for Project 2.  This class represents the
+ * main body of the DNA Tree, which stores DNA sequences in
+ * a tree structure.  Contains a root and flyweight node, as
+ * well as several methods to interface with the DNA Tree.
  * 
  * @author Chris Schweinhart (schwein)
  * @author Nate Kibler (nkibler7)
  */
 public class DNATree {
 
+	/**
+	 * Node to keep track of the root of the tree.  Will be
+	 * a pointer to fw when the tree is empty, a leaf node
+	 * when there is only one sequence in the tree, and an
+	 * internal node when there are multiples sequences.
+	 */
 	private DNATreeNode root;
+	
+	/**
+	 * Flyweight node to represent all empty nodes in the tree.
+	 * Instead of having multiple instances of empty leaf nodes,
+	 * we will simply use one to save on space.  It also makes
+	 * error checking easier, as we need not access a leaf node's
+	 * sequence to know that it has one (i.e. is not empty).
+	 */
 	private FlyweightNode fw;
 
+	/**
+	 * Basic constructor for the DNATree class.  Creates a new
+	 * flyweight for use of the tree, and initially points the
+	 * root to fw (since the tree is empty).
+	 */
 	public DNATree() {
 		fw = new FlyweightNode();
 		root = fw;
 	}
 
-
+	/**
+	 * Inserts a sequence into the tree.  The method will try
+	 * to find the closest node for the sequence to live at
+	 * without ambiguity, moving around the other nodes as needed.
+	 * Will return the level of the tree, or -1 if unsuccessful.
+	 * 
+	 * @param sequence - the new DNA sequence to insert
+	 * @return the level of the new node, or -1 if unsuccessful
+	 */
 	public int insert(String sequence) 
 	{
-		// Check if the root is null (empty tree)
+		// Check if the root is flyweight (empty tree)
 		if (root instanceof FlyweightNode) {
 			root = new LeafNode(sequence, 0);
 			return 0;
 		}
+		
 		// Check if there is only one node in the tree
 		if (root instanceof LeafNode) {
 			return handleLeafSituation(sequence);
 		}
+		
 		return insert(sequence, (InternalNode)root);
 	}
 
 	/**
-	 * Builds a tree structure from a starting LeafNode root and a String sequence
-	 * value that will be added to this tree.
+	 * Builds a tree structure from a starting LeafNode root
+	 * and a String sequence value that will be added to this tree.
+	 * Handles the case when the root is a LeafNode.
+	 * 
 	 * @param root - the LeafNode to build from
 	 * @param sequence - the String value sequence to add
 	 * @return the level at which the sequence was added
 	 */
 	private int handleLeafSituation(String sequence) {
+		
 		String sequence2 = ((LeafNode) root).getSequence();
 		root = new InternalNode(fw, 0);
 		InternalNode focusNode = (InternalNode) root;
@@ -87,9 +122,10 @@ public class DNATree {
 	}
 
 	/**
-	 * Private helper method for the insert operation.  Will build a tree at
-	 * the specified node to replace the leaf node in question with a tree.
-	 * Depending on how many characters the sequence and the leaf node share,
+	 * Private helper method for the insert operation.
+	 * Will build a tree at the specified node to replace
+	 * the leaf node in question with a tree. Depending on
+	 * how many characters the sequence and the leaf node share,
 	 * the height of the tree may differ.
 	 * 
 	 * @param node - the internal node above the leaf node
@@ -134,10 +170,23 @@ public class DNATree {
 		return count;
 	}
 
+	/**
+	 * Removes the given sequence from the tree, if it is
+	 * found.  Returns true if the sequence was found and
+	 * removed, and false otherwise.  Method will rebuild
+	 * the area around the removed Leaf Node if needed.
+	 * 
+	 * @param sequence - the DNA sequence to be removed
+	 * @return whether or not the remove was successful
+	 */
 	public boolean remove(String sequence) {
+		
+		// Check if root is flyweight (empty tree)
 		if (root instanceof FlyweightNode) {
 			return false;
 		}
+		
+		// Check if there is only one node in the tree
 		if (root instanceof LeafNode) {
 			if (((LeafNode) root).getSequence().equals(sequence)) {
 				root = fw;
@@ -145,30 +194,52 @@ public class DNATree {
 			}
 			return false;
 		}
-		return findAndRemove(sequence, (InternalNode) root);
+		
+		return findAndRemove(sequence, (InternalNode)root);
 	}
 
-	private boolean findAndRemove(String sequence, InternalNode focus) {
+	/**
+	 * Recursive helper method to find and remove a
+	 * given sequence from the tree.  First, determines
+	 * the location of the nearest parent node, then
+	 * removes the sequence if found.
+	 * 
+	 * @param sequence - the sequence to be removed
+	 * @param node - the internal node in question
+	 * @return whether or not the remove was successful
+	 */
+	private boolean findAndRemove(String sequence, InternalNode node) {
+		
 		System.out.println("Find and remove: " + sequence);
+		
 		char character = sequence.isEmpty() ? 'E' : sequence.charAt(0);
-		DNATreeNode nextNode = focus.getNode(character);
+		DNATreeNode nextNode = node.getNode(character);
+		
+		// Determine if the node we're looking for is in the tree
 		if (nextNode instanceof FlyweightNode) {
 			return false;
 		}
+		
+		// Check if the node we're looking for is a match
 		if (nextNode instanceof LeafNode) {
 			if (((LeafNode) nextNode).getSequence().equals(sequence)) {
-				focus.addNode(fw, character);
+				node.addNode(fw, character);
 				return true;
 			}
 			return false;
 		}
+		
+		// Recursive case to handle internal node
 		if (findAndRemove(sequence.substring(1), (InternalNode) nextNode)) {
+			// Handle cases with internal node with only one child
+			// This is when an internal node is no longer needed,
+			// since it can just be replaced by its only non-empty child
 			if (((InternalNode)nextNode).getNumFlyNodes() == 4) {
 				char[] chars = {'A', 'C', 'G', 'T', 'E'};
 				for (char currentChar: chars) {
-					DNATreeNode node = ((InternalNode)nextNode).getNode(currentChar);
-					if (node instanceof LeafNode) {
-						focus.addNode(node, character);
+					DNATreeNode child = ((InternalNode)nextNode).getNode(currentChar);
+					if (child instanceof LeafNode) {
+						node.addNode(child, character);
 						return true;
 					}
 				}
@@ -184,6 +255,7 @@ public class DNATree {
 	 * give the basic structure via indentation and I/E/sequences.
 	 * Flags are for extra options, such as sequence lengths or
 	 * letter statistics.
+	 * 
 	 * @param lengths - whether or not to print sequence lengths
 	 * @param stats - whether or not to print sequence statistics
 	 * @return the print for the entire tree
@@ -200,6 +272,7 @@ public class DNATree {
 	/**
 	 * Helper method for the print method.  Will recursively perform
 	 * a preorder traversal, hitting all the nodes to print them.
+	 * 
 	 * @param node - the current node to print
 	 * @param lengths - whether or not to print sequence lengths
 	 * @param stats - whether or not to print sequence statistics
@@ -243,6 +316,7 @@ public class DNATree {
 					letters[i] = 0;
 				}
 
+				// Collect ACGT letter counts
 				for (char c : sequence.toLowerCase().toCharArray()) {
 					if (c == 'a') {
 						letters[0]++;
@@ -258,7 +332,6 @@ public class DNATree {
 				for (int i = 0; i < 4; i++) {
 					frequencies[i] = 100.0 * letters[i] / sequence.length();
 				}
-
 
 				DecimalFormat decim = new DecimalFormat("0.00");
 
@@ -288,6 +361,7 @@ public class DNATree {
 	 * (2) exact matching.  Prefix will return all sequences with a
 	 * given prefix, and exact matching will print the exact sequence
 	 * if found in the tree.
+	 * 
 	 * @param pattern - the search pattern to look for
 	 * @return the number of nodes visited and search results
 	 */
@@ -357,6 +431,7 @@ public class DNATree {
 
 	/**
 	 * Helper method for printing all of the nodes in a tree.
+	 * 
 	 * @param node - the root of the tree
 	 * @param visited - an int counter for the nodes visited
 	 * @return an output string for all the sequences
@@ -366,6 +441,7 @@ public class DNATree {
 		visited[0]++;
 		String output = "";
 
+		// Handle the A child
 		if (node.getNode('A') instanceof LeafNode) {
 			output += "Sequence: " + ((LeafNode)node.getNode('A')).getSequence() + "\n";
 			visited[0]++;
@@ -375,6 +451,7 @@ public class DNATree {
 			visited[0]++;
 		}
 
+		// Handle the C child
 		if (node.getNode('C') instanceof LeafNode) {
 			output += "Sequence: " + ((LeafNode)node.getNode('C')).getSequence() + "\n";
 			visited[0]++;
@@ -384,6 +461,7 @@ public class DNATree {
 			visited[0]++;
 		}
 
+		// Handle the G child
 		if (node.getNode('G') instanceof LeafNode) {
 			output += "Sequence: " + ((LeafNode)node.getNode('G')).getSequence() + "\n";
 			visited[0]++;
@@ -393,6 +471,7 @@ public class DNATree {
 			visited[0]++;
 		}
 
+		// Handle the T child
 		if (node.getNode('T') instanceof LeafNode) {
 			output += "Sequence: " + ((LeafNode)node.getNode('T')).getSequence() + "\n";
 			visited[0]++;
@@ -402,6 +481,7 @@ public class DNATree {
 			visited[0]++;
 		}
 
+		// Handle exact child
 		if (node.getNode('E') instanceof LeafNode) {
 			output += "Sequence: " + ((LeafNode)node.getNode('A')).getSequence() + "\n";
 		}

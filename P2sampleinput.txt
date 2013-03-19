@@ -1,6 +1,7 @@
 print
 insert ACGT     
-print    
+print    lengths
+print    stats
 insert            AAAA   
 print
 insert AA

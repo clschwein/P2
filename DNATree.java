@@ -219,6 +219,10 @@ public class DNATree {
 			if (stats) {
 				int[] letters = new int[4];
 				double[] frequencies = new double[4];
+				
+				for (int i = 0; i < 4; i++) {
+					letters[i] = 0;
+				}
 
 				for (char c : sequence.toLowerCase().toCharArray()) {
 					if (c == 'a') {
@@ -233,7 +237,7 @@ public class DNATree {
 				}
 
 				for (int i = 0; i < 4; i++) {
-					frequencies[i] = letters[i] / sequence.length();
+					frequencies[i] = 100.0 * letters[i] / sequence.length();
 				}
 
 

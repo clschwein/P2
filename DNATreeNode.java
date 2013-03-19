@@ -1,7 +1,7 @@
 /**
- * This class represents a flyweight node in the tree. This node does not store
- * a sequence value, nor does it point to other InternalNode or LeafNode objects.
- * Instead, it is used to save space when referring to an empty node.
+ * This class represents a general node in the DNA tree.  It is
+ * abstract, and so cannot ever be instantiated.  To see more
+ * specific uses of child nodes, see their own files.
  *
  */
 public abstract class DNATreeNode {
@@ -12,6 +12,7 @@ public abstract class DNATreeNode {
 	
 	/**
 	 * Returns the level of the node.
+	 * 
 	 * @return - the level of the node
 	 */
 	public int getLevel()
@@ -21,6 +22,7 @@ public abstract class DNATreeNode {
 	
 	/**
 	 * Sets the level of the node to a new value.
+	 * 
 	 * @param l - the new level for the node
 	 */
 	public void setLevel(int l)

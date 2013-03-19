@@ -47,21 +47,24 @@ public class DNATree {
 		for (i = 0; (i < sequence.length() || i < sequence2.length()); i++) {
 			if (i == sequence.length()) {
 				focusNode.addNode(new LeafNode(sequence2, i + 1), sequence2.charAt(i));
-				focusNode.addNode(new LeafNode(sequence, i + 1), 'e');
+				focusNode.addNode(new LeafNode(sequence, i + 1), 'E');
 				break;
 			}
 			if (i == sequence2.length()) {
 				focusNode.addNode(new LeafNode(sequence, i + 1), sequence.charAt(i));
-				focusNode.addNode(new LeafNode(sequence2, i + 1), 'e');
+				focusNode.addNode(new LeafNode(sequence2, i + 1), 'E');
 				break;
 			}
 			if (sequence.charAt(i) != sequence2.charAt(i)) {
 				focusNode.addNode(new LeafNode(sequence, i + 1), sequence.charAt(i));
 				focusNode.addNode(new LeafNode(sequence2, i + 1), sequence2.charAt(i));
+				System.out.println("Placed " + ((LeafNode)focusNode.getNode(sequence.charAt(i))).getSequence() + " at " + sequence.charAt(i) + " on level " + (focusNode.getLevel() + 1));
+				System.out.println("Placed " + sequence2 + " at " + sequence2.charAt(i));
 				break;
 			}
-			InternalNode newFocus = new InternalNode(fw, i);
+			InternalNode newFocus = new InternalNode(fw, i + 1);
 			focusNode.addNode(newFocus, sequence.charAt(i));
+			System.out.println("Added new internal node at pos " + sequence.charAt(i) + " on level " + i);
 			focusNode = newFocus;
 		}
 		return i + 1;
@@ -98,6 +101,15 @@ public class DNATree {
 		LeafNode save = (LeafNode)node.getNode(sequence.charAt(node.getLevel()));
 		String pattern = save.getSequence();
 		int count = save.getLevel();
+		if (count >= sequence.length()) {
+			InternalNode temp = new InternalNode(fw, count);
+			node.addNode(temp, sequence.charAt(sequence.length() - 1));
+			node = temp;
+			save.setLevel(save.getLevel() + 1);
+			node.addNode(save, pattern.charAt(count));
+			node.addNode(new LeafNode(sequence, count + 1), 'E');
+			return count + 1;
+		}
 
 		while (count < sequence.length() && count < pattern.length()) {
 			if (pattern.charAt(count) == sequence.charAt(count)) {
@@ -111,8 +123,14 @@ public class DNATree {
 				return count;
 			}
 		}
-		node.addNode(save, pattern.charAt(count));
-		node.addNode(new LeafNode(sequence, count), sequence.charAt(count));
+		if (count == sequence.length()) {
+			node.addNode(save, pattern.charAt(count));
+			node.addNode(new LeafNode(sequence, count), 'E');
+		}
+		else if (count == pattern.length()) {
+			node.addNode(new LeafNode(sequence, count), sequence.charAt(count));
+			node.addNode(save, 'E');
+		}
 		return count;
 	}
 
@@ -131,7 +149,8 @@ public class DNATree {
 	}
 
 	private boolean findAndRemove(String sequence, InternalNode focus) {
-		char character = sequence.isEmpty() ? 'e' : sequence.charAt(0);
+		System.out.println("Find and remove: " + sequence);
+		char character = sequence.isEmpty() ? 'E' : sequence.charAt(0);
 		DNATreeNode nextNode = focus.getNode(character);
 		if (nextNode instanceof FlyweightNode) {
 			return false;
@@ -145,7 +164,7 @@ public class DNATree {
 		}
 		if (findAndRemove(sequence.substring(1), (InternalNode) nextNode)) {
 			if (((InternalNode)nextNode).getNumFlyNodes() == 4) {
-				char[] chars = {'a', 'c', 'g', 't', 'e'};
+				char[] chars = {'A', 'C', 'G', 'T', 'E'};
 				for (char currentChar: chars) {
 					DNATreeNode node = ((InternalNode)nextNode).getNode(currentChar);
 					if (node instanceof LeafNode) {
@@ -253,11 +272,11 @@ public class DNATree {
 			output += "I";
 
 			// Recursive calls to children
-			output += print(((InternalNode)node).getNode('a'), node, lengths, stats);
-			output += print(((InternalNode)node).getNode('c'), node, lengths, stats);
-			output += print(((InternalNode)node).getNode('g'), node, lengths, stats);
-			output += print(((InternalNode)node).getNode('t'), node, lengths, stats);
-			output += print(((InternalNode)node).getNode('e'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('A'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('C'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('G'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('T'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('E'), node, lengths, stats);
 		}
 
 		return output;
@@ -347,44 +366,44 @@ public class DNATree {
 		visited[0]++;
 		String output = "";
 
-		if (node.getNode('a') instanceof LeafNode) {
-			output += "Sequence: " + ((LeafNode)node.getNode('a')).getSequence() + "\n";
+		if (node.getNode('A') instanceof LeafNode) {
+			output += "Sequence: " + ((LeafNode)node.getNode('A')).getSequence() + "\n";
 			visited[0]++;
-		} else if (node.getNode('a') instanceof InternalNode) {
-			output += printAllLeafNodes((InternalNode)node.getNode('a'), visited);
+		} else if (node.getNode('A') instanceof InternalNode) {
+			output += printAllLeafNodes((InternalNode)node.getNode('A'), visited);
 		} else {
 			visited[0]++;
 		}
 
-		if (node.getNode('c') instanceof LeafNode) {
-			output += "Sequence: " + ((LeafNode)node.getNode('c')).getSequence() + "\n";
+		if (node.getNode('C') instanceof LeafNode) {
+			output += "Sequence: " + ((LeafNode)node.getNode('C')).getSequence() + "\n";
 			visited[0]++;
-		} else if (node.getNode('c') instanceof InternalNode) {
-			output += printAllLeafNodes((InternalNode)node.getNode('c'), visited);
+		} else if (node.getNode('C') instanceof InternalNode) {
+			output += printAllLeafNodes((InternalNode)node.getNode('C'), visited);
 		} else {
 			visited[0]++;
 		}
 
-		if (node.getNode('g') instanceof LeafNode) {
-			output += "Sequence: " + ((LeafNode)node.getNode('g')).getSequence() + "\n";
+		if (node.getNode('G') instanceof LeafNode) {
+			output += "Sequence: " + ((LeafNode)node.getNode('G')).getSequence() + "\n";
 			visited[0]++;
-		} else if (node.getNode('g') instanceof InternalNode) {
-			output += printAllLeafNodes((InternalNode)node.getNode('g'), visited);
+		} else if (node.getNode('G') instanceof InternalNode) {
+			output += printAllLeafNodes((InternalNode)node.getNode('G'), visited);
 		} else {
 			visited[0]++;
 		}
 
-		if (node.getNode('t') instanceof LeafNode) {
-			output += "Sequence: " + ((LeafNode)node.getNode('t')).getSequence() + "\n";
+		if (node.getNode('T') instanceof LeafNode) {
+			output += "Sequence: " + ((LeafNode)node.getNode('T')).getSequence() + "\n";
 			visited[0]++;
-		} else if (node.getNode('t') instanceof InternalNode) {
-			output += printAllLeafNodes((InternalNode)node.getNode('t'), visited);
+		} else if (node.getNode('T') instanceof InternalNode) {
+			output += printAllLeafNodes((InternalNode)node.getNode('T'), visited);
 		} else {
 			visited[0]++;
 		}
 
-		if (node.getNode('e') instanceof LeafNode) {
-			output += "Sequence: " + ((LeafNode)node.getNode('a')).getSequence() + "\n";
+		if (node.getNode('E') instanceof LeafNode) {
+			output += "Sequence: " + ((LeafNode)node.getNode('A')).getSequence() + "\n";
 		}
 
 		visited[0]++;

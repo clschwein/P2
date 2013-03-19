@@ -4,6 +4,8 @@ print    lengths
 print    stats
 insert            AAAA   
 print
+print lengths
+print stats
 insert AA
 print
 insert                 AAACCCCGGTGAAAACGTA

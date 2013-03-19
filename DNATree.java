@@ -171,7 +171,11 @@ public class DNATree {
 	 */
 	public String print(boolean lengths, boolean stats) {
 
-		return print(root, lengths, stats);
+		if (root instanceof FlyweightNode) {
+			return "Print called on empty tree.";
+		}
+		
+		return print(root, null, lengths, stats);
 	}
 
 	/**
@@ -182,12 +186,20 @@ public class DNATree {
 	 * @param stats - whether or not to print sequence statistics
 	 * @return the print for this node and any children
 	 */
-	private String print(DNATreeNode node, boolean lengths, boolean stats) {
+	private String print(DNATreeNode node, DNATreeNode parent, boolean lengths, boolean stats) {
 
 		String output = "\n";
 
+		// Determine node level
+		int level;
+		if (node instanceof FlyweightNode) {
+			level = parent.getLevel() + 1;
+		} else {
+			level = node.getLevel();
+		}
+		
 		// Add indentation for node level
-		for (int i = 0; i < node.getLevel(); i++) {
+		for (int i = 0; i < level; i++) {
 			output += "  ";
 		}
 
@@ -237,11 +249,11 @@ public class DNATree {
 			output += "I";
 
 			// Recursive calls to children
-			output += print(((InternalNode)node).getNode('a'), lengths, stats);
-			output += print(((InternalNode)node).getNode('c'), lengths, stats);
-			output += print(((InternalNode)node).getNode('g'), lengths, stats);
-			output += print(((InternalNode)node).getNode('t'), lengths, stats);
-			output += print(((InternalNode)node).getNode('e'), lengths, stats);
+			output += print(((InternalNode)node).getNode('a'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('c'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('g'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('t'), node, lengths, stats);
+			output += print(((InternalNode)node).getNode('e'), node, lengths, stats);
 		}
 
 		return output;
@@ -260,7 +272,7 @@ public class DNATree {
 
 		// Check for special root case
 		if (root instanceof FlyweightNode) {
-			return "Cannot search on empty tree.";
+			return "Search called on empty tree.";
 		}
 
 		String output = "\n";

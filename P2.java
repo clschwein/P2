@@ -107,7 +107,7 @@ public class P2 {
 				} else if (line.matches(REMOVE_PATTERN)) {
 					
 					// Parse out the sequence from the command line
-					int index = Math.max(line.indexOf("e"), line.indexOf("E")) + 1;
+					int index = Math.max(line.indexOf("v"), line.indexOf("V")) + 2;
 					String sequence = line.substring(index);
 					sequence = sequence.trim();
 					
@@ -150,6 +150,7 @@ public class P2 {
 			System.exit(0);
 		} catch (Exception e) {
 			System.out.println("Incorrect file formatting.");
+			e.printStackTrace();
 			System.exit(0);
 		}
 	}

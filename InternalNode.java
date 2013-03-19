@@ -33,15 +33,15 @@ public class InternalNode extends DNATreeNode {
 	 * @param pos - the position to add it at (a, c, g, t, or e for 'end')
 	 */
 	public void addNode(DNATreeNode node, char pos) {
-		if (pos == 'a') {
+		if (pos == 'A') {
 			a = node;
-		} else if (pos == 'c') {
+		} else if (pos == 'C') {
 			c = node;
-		} else if (pos == 'g') {
+		} else if (pos == 'G') {
 			g = node;
-		} else if (pos == 't') {
+		} else if (pos == 'T') {
 			t = node;
-		} else if (pos == 'e') {
+		} else if (pos == 'E') {
 			end = node;
 		}
 	}
@@ -53,15 +53,15 @@ public class InternalNode extends DNATreeNode {
 	 * @return the DNATreeNode stored at the specified location
 	 */
 	public DNATreeNode getNode(char pos) {
-		if (pos == 'a') {
+		if (pos == 'A') {
 			return a;
-		} else if (pos == 'c') {
+		} else if (pos == 'C') {
 			return c;
-		} else if (pos == 'g') {
+		} else if (pos == 'G') {
 			return g;
-		} else if (pos == 't') {
+		} else if (pos == 'T') {
 			return t;
-		} else if (pos == 'e') {
+		} else if (pos == 'E') {
 			return end;
 		}
 		return null;

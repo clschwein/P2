@@ -66,4 +66,10 @@ public class InternalNode extends DNATreeNode {
 		}
 		return null;
 	}
+	
+	public int getNumFlyNodes() {
+		return (a instanceof FlyweightNode ? 1 : 0) + (c instanceof FlyweightNode ? 1 : 0)
+				+ (g instanceof FlyweightNode ? 1 : 0) + (t instanceof FlyweightNode ? 1 : 0)
+				+ (end instanceof FlyweightNode ? 1 : 0);
+	}
 }

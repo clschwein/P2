@@ -123,11 +123,88 @@ public class DNATree {
 		return true;
 	}
 
+	/**
+	 * Method to print out various things about a tree.  Will always
+	 * give the basic structure via indentation and I/E/sequences.
+	 * Flags are for extra options, such as sequence lengths or
+	 * letter statistics.
+	 * @param lengths - whether or not to print sequence lengths
+	 * @param stats - whether or not to print sequence statistics
+	 * @return the print for the entire tree
+	 */
 	public String print(boolean lengths, boolean stats) {
-
-		// TODO Implement print method
-
-		return "NYI";
+		
+		return print(root, lengths, stats);
+	}
+	
+	/**
+	 * Helper method for the print method.  Will recursively perform
+	 * a preorder traversal, hitting all the nodes to print them.
+	 * @param node - the current node to print
+	 * @param lengths - whether or not to print sequence lengths
+	 * @param stats - whether or not to print sequence statistics
+	 * @return the print for this node and any children
+	 */
+	private String print(DNATreeNode node, boolean lengths, boolean stats) {
+		
+		String output = "\n";
+		
+		// Add indentation for node level
+		for (int i = 0; i < node.getLevel(); i++) {
+			output += "  ";
+		}
+		
+		// Case breakdown
+		if (node instanceof FlyweightNode) {
+			output += "E";
+		} else if(node instanceof LeafNode) {
+			String sequence = ((LeafNode)node).getSequence();
+			output += sequence;
+			
+			// Handle print lengths command
+			if (lengths) {
+				output += ": length " + sequence.length();
+			}
+			
+			// Handle print stats command
+			if (stats) {
+				int[] letters = new int[4];
+				double[] frequencies = new double[4];
+				
+				for (char c : sequence.toCharArray()) {
+					if (c == 'a') {
+						letters[0]++;
+					} else if (c == 'c') {
+						letters[1]++;
+					} else if (c == 'g') {
+						letters[2]++;
+					} else if (c == 't') {
+						letters[3]++;
+					}
+				}
+				
+				for (int i = 0; i < 4; i++) {
+					frequencies[i] = letters[i] / sequence.length();
+				}
+				
+				output += ": ";
+				output += "A(" + frequencies[0] + "), ";
+				output += "C(" + frequencies[1] + "), ";
+				output += "G(" + frequencies[2] + "), ";
+				output += "T(" + frequencies[3] + ")";
+			}
+		} else {
+			output += "I";
+			
+			// Recursive calls to children
+			output += print(((InternalNode)node).getNode('a'), lengths, stats);
+			output += print(((InternalNode)node).getNode('c'), lengths, stats);
+			output += print(((InternalNode)node).getNode('g'), lengths, stats);
+			output += print(((InternalNode)node).getNode('t'), lengths, stats);
+			output += print(((InternalNode)node).getNode('e'), lengths, stats);
+		}
+		
+		return output;
 	}
 
 	/**
@@ -258,6 +335,4 @@ public class DNATree {
 		
 		return output;
 	}
-	
-	
 }

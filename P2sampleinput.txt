@@ -37,6 +37,7 @@ print stats
 search         AAAA$
 search     AA
 search      ACGT$
+search AA$
   
   
            

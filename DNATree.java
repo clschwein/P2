@@ -93,13 +93,10 @@ public class DNATree {
 			if (sequence.charAt(i) != sequence2.charAt(i)) {
 				focusNode.addNode(new LeafNode(sequence, i + 1), sequence.charAt(i));
 				focusNode.addNode(new LeafNode(sequence2, i + 1), sequence2.charAt(i));
-				System.out.println("Placed " + ((LeafNode)focusNode.getNode(sequence.charAt(i))).getSequence() + " at " + sequence.charAt(i) + " on level " + (focusNode.getLevel() + 1));
-				System.out.println("Placed " + sequence2 + " at " + sequence2.charAt(i));
 				break;
 			}
 			InternalNode newFocus = new InternalNode(fw, i + 1);
 			focusNode.addNode(newFocus, sequence.charAt(i));
-			System.out.println("Added new internal node at pos " + sequence.charAt(i) + " on level " + i);
 			focusNode = newFocus;
 		}
 		return i + 1;
@@ -268,7 +265,7 @@ public class DNATree {
 			return "Print called on empty tree.";
 		}
 		
-		return print(root, null, lengths, stats);
+		return print(root, null, lengths, stats) + "\n";
 	}
 
 	/**
@@ -369,6 +366,7 @@ public class DNATree {
 	 */
 	public String search(String pattern) {
 
+		
 		// Check for special root case
 		if (root instanceof FlyweightNode) {
 			return "Search called on empty tree.";
@@ -386,7 +384,7 @@ public class DNATree {
 		} else {
 			exact = false;
 		}
-
+		
 		// Check for only one node
 		if (root instanceof LeafNode) {
 			String sequence = ((LeafNode)root).getSequence();
@@ -401,7 +399,7 @@ public class DNATree {
 			// Search for the closest parent node for our pattern
 			int count = 0;
 			InternalNode focus = (InternalNode)root;
-			while (count < pattern.length() - 1) {
+			while (count < pattern.length()) {
 				if (focus.getNode(pattern.charAt(count)) instanceof InternalNode) {
 					focus = (InternalNode)focus.getNode(pattern.charAt(count));
 				} else {
@@ -411,24 +409,39 @@ public class DNATree {
 				visited[0]++;
 			}
 
+			char position;
+			
+			if (count == pattern.length()) {
+				position = 'E';
+			} else {
+				position = pattern.charAt(count);
+			}
+			
+			DNATreeNode nextNode = focus.getNode(position);
+			
 			if (exact) {
-				if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count)) instanceof LeafNode) {
-					output += "Sequence: " + ((LeafNode)focus.getNode(pattern.charAt(count))).getSequence();
+				if (nextNode instanceof LeafNode && ((LeafNode)nextNode).getSequence().equals(pattern)) {
+					output += "Sequence: " + ((LeafNode)nextNode).getSequence();
 				} else {
 					output += "No sequence found";
 				}
+				visited[0]++;
 			} else {
-				if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count)) instanceof LeafNode) {
-					output += "Sequence: " + ((LeafNode)focus.getNode(pattern.charAt(count))).getSequence();
-				} else if (count == pattern.length() - 1 && focus.getNode(pattern.charAt(count)) instanceof InternalNode) {
-					output += printAllLeafNodes((InternalNode)focus.getNode(pattern.charAt(count)), visited);
+				if (position != 'E' && nextNode instanceof LeafNode && ((LeafNode)nextNode).getSequence().substring(0, pattern.length()).equals(pattern)) {
+					output += "Sequence: " + ((LeafNode)nextNode).getSequence();
+					visited[0]++;
+				} else if (position == 'E') {
+					output += printAllLeafNodes((InternalNode)focus, visited);
+					visited[0]--;
+					output = output.substring(0, output.length() - 1);
 				} else {
 					output += "No sequence found";
+					visited[0]++;
 				}
 			}
 		}
 
-		return "Number of nodes visited: " + visited[0] + output;
+		return "Number of nodes visited: " + visited[0] + output + "\n";
 	}
 
 	/**

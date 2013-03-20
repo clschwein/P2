@@ -23,7 +23,7 @@ search AA$
 
 insert       ACTGGGAA          
 print
-remove       AA         
+remove       ACGT         
 print
 insert ACCTT
 print

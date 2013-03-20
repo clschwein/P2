@@ -214,9 +214,7 @@ public class DNATree {
 	 */
 	private boolean findAndRemove(String sequence, InternalNode node) {
 		
-		System.out.println("Find and remove: " + sequence);
-		
-		char character = sequence.isEmpty() ? 'E' : sequence.charAt(0);
+		char character = node.getLevel() >= sequence.length() ? 'E' : sequence.charAt(node.getLevel());
 		DNATreeNode nextNode = node.getNode(character);
 		
 		// Determine if the node we're looking for is in the tree
@@ -234,7 +232,7 @@ public class DNATree {
 		}
 		
 		// Recursive case to handle internal node
-		if (findAndRemove(sequence.substring(1), (InternalNode) nextNode)) {
+		if (findAndRemove(sequence, (InternalNode) nextNode)) {
 			// Handle cases with internal node with only one child
 			// This is when an internal node is no longer needed,
 			// since it can just be replaced by its only non-empty child
@@ -250,7 +248,7 @@ public class DNATree {
 			}
 			return true;
 		}
-		return false;
+		return true;
 	}
 
 

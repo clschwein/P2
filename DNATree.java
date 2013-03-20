@@ -137,11 +137,12 @@ public class DNATree {
 		LeafNode save = (LeafNode)node.getNode(sequence.charAt(node.getLevel()));
 		String pattern = save.getSequence();
 		int count = save.getLevel();
-		if (count >= sequence.length()) {
-			InternalNode temp = new InternalNode(fw, count);
-			node.addNode(temp, sequence.charAt(sequence.length() - 1));
-			node = temp;
-			save.setLevel(save.getLevel() + 1);
+		InternalNode newNode = new InternalNode(fw, count);
+		node.addNode(newNode, sequence.charAt(node.getLevel()));
+		node = newNode;
+		
+		if (count == sequence.length()) {
+			save.setLevel(count + 1);
 			node.addNode(save, pattern.charAt(count));
 			node.addNode(new LeafNode(sequence, count + 1), 'E');
 			return count + 1;
@@ -154,17 +155,20 @@ public class DNATree {
 				node = temp;
 				count++;
 			} else {
+				save.setLevel(count + 1);
 				node.addNode(save, pattern.charAt(count));
-				node.addNode(new LeafNode(sequence, count), sequence.charAt(count));
-				return count;
+				node.addNode(new LeafNode(sequence, count + 1), sequence.charAt(count));
+				return count + 1;
 			}
 		}
 		if (count == sequence.length()) {
+			save.setLevel(count + 1);
 			node.addNode(save, pattern.charAt(count));
-			node.addNode(new LeafNode(sequence, count), 'E');
+			node.addNode(new LeafNode(sequence, count + 1), 'E');
 		}
 		else if (count == pattern.length()) {
-			node.addNode(new LeafNode(sequence, count), sequence.charAt(count));
+			save.setLevel(count + 1);
+			node.addNode(new LeafNode(sequence, count + 1), sequence.charAt(count));
 			node.addNode(save, 'E');
 		}
 		return count;
@@ -483,7 +487,7 @@ public class DNATree {
 
 		// Handle exact child
 		if (node.getNode('E') instanceof LeafNode) {
-			output += "Sequence: " + ((LeafNode)node.getNode('A')).getSequence() + "\n";
+			output += "Sequence: " + ((LeafNode)node.getNode('E')).getSequence() + "\n";
 		}
 
 		visited[0]++;

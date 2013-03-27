@@ -1,46 +1,25 @@
-print
-insert ACGT     
-print    lengths
-print    stats
-insert            AAAA   
-print
-print lengths
-print stats
-insert AA
-print
+       insert ACGT     
+    
+
+
+ insert            AAAA   
+ insert AA
 insert                 AAACCCCGGTGAAAACGTA
-print
-
-
-
-
-
-search AA$
-
-
-
-
-
 insert       ACTGGGAA          
-print
+
 remove       ACGT         
-print
+
 insert ACCTT
-print
 insert ACTTA
-print
-insert TATA
-print
-insert TCG
-print lengths
-print stats
-search         AAAA$
-search     AA
-search      ACGT$
-search AA$
-  
-  
-           
-           
-              
-              
+ 
+ print
+ 
+ insert TATA
+ insert TCG
+ 
+ print lengths
+ print stats
+ 
+ search         AAAA$
+                         search     AA
+ search      ACGT$              

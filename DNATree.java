@@ -57,118 +57,66 @@ public class DNATree {
 		
 		// Check if there is only one node in the tree
 		if (root instanceof LeafNode) {
-			return handleLeafSituation(sequence);
+			
+			// Check if the sequence is already in the tree
+			if (((LeafNode) root).getSequence().equals(sequence)) {
+				return -1;
+			}
+			
+			// Replace leaf node with internal node and downshift
+			InternalNode temp = new InternalNode(fw, 0);
+			temp.addNode(root, ((LeafNode) root).getSequence().charAt(0));
+			root.setLevel(1);
+			root = temp;
 		}
 		
 		return insert(sequence, (InternalNode)root);
 	}
 
-	/**
-	 * Builds a tree structure from a starting LeafNode root
-	 * and a String sequence value that will be added to this tree.
-	 * Handles the case when the root is a LeafNode.
+	/** 
+	 * Private helper method for the insert operation.  Will
+	 * look at the next child in the sequence to determine
+	 * what to do with the new sequence.
 	 * 
-	 * @param root - the LeafNode to build from
-	 * @param sequence - the String value sequence to add
-	 * @return the level at which the sequence was added
+	 * @param sequence - the new DNA sequence to insert
+	 * @param node - the internal node parent in question
+	 * @return the level of the new node, or -1 if unsuccessful
 	 */
-	private int handleLeafSituation(String sequence) {
-		
-		String sequence2 = ((LeafNode) root).getSequence();
-		root = new InternalNode(fw, 0);
-		InternalNode focusNode = (InternalNode) root;
-
-		int i;
-		for (i = 0; (i < sequence.length() || i < sequence2.length()); i++) {
-			if (i == sequence.length()) {
-				focusNode.addNode(new LeafNode(sequence2, i + 1), sequence2.charAt(i));
-				focusNode.addNode(new LeafNode(sequence, i + 1), 'E');
-				break;
-			}
-			if (i == sequence2.length()) {
-				focusNode.addNode(new LeafNode(sequence, i + 1), sequence.charAt(i));
-				focusNode.addNode(new LeafNode(sequence2, i + 1), 'E');
-				break;
-			}
-			if (sequence.charAt(i) != sequence2.charAt(i)) {
-				focusNode.addNode(new LeafNode(sequence, i + 1), sequence.charAt(i));
-				focusNode.addNode(new LeafNode(sequence2, i + 1), sequence2.charAt(i));
-				break;
-			}
-			InternalNode newFocus = new InternalNode(fw, i + 1);
-			focusNode.addNode(newFocus, sequence.charAt(i));
-			focusNode = newFocus;
-		}
-		return i + 1;
-	}
-
 	private int insert(String sequence, InternalNode node)
 	{
-		DNATreeNode child = node.getNode(sequence.charAt(node.getLevel()));
+		// Determine position
+		char position;
+		if (node.getLevel() < sequence.length()) {
+			position = sequence.charAt(node.getLevel());
+		} else {
+			position = 'E';
+		}
+		
+		DNATreeNode child = node.getNode(position);
 
+		// Handle flyweight case
 		if (child instanceof FlyweightNode) {
-			node.addNode(new LeafNode(sequence, node.getLevel() + 1), sequence.charAt(node.getLevel()));
+			node.addNode(new LeafNode(sequence, node.getLevel() + 1), position);
 			return node.getLevel() + 1;
 		}
-
+		
+		// Handle leafnode case
 		if (child instanceof LeafNode) {
-			return replaceNodeWithTree(node, sequence);
+			
+			// Check if the sequence is already in the tree
+			if (((LeafNode) child).getSequence().equals(sequence)) {
+				return -1;
+			}
+			
+			// Replace leaf node with internal node and downshift
+			InternalNode temp = new InternalNode(fw, child.getLevel());
+			temp.addNode(child, ((LeafNode) child).getSequence().charAt(child.getLevel()));
+			child.setLevel(child.getLevel() + 1);
+			node.addNode(temp, sequence.charAt(node.getLevel()));
+			child = temp;
 		}
 
 		return insert(sequence, (InternalNode)child);
-	}
-
-	/**
-	 * Private helper method for the insert operation.
-	 * Will build a tree at the specified node to replace
-	 * the leaf node in question with a tree. Depending on
-	 * how many characters the sequence and the leaf node share,
-	 * the height of the tree may differ.
-	 * 
-	 * @param node - the internal node above the leaf node
-	 * @param sequence - the string sequence for DNA
-	 * @return the level of the new inserted node
-	 */
-	private int replaceNodeWithTree(InternalNode node, String sequence)
-	{
-		LeafNode save = (LeafNode)node.getNode(sequence.charAt(node.getLevel()));
-		String pattern = save.getSequence();
-		int count = save.getLevel();
-		InternalNode newNode = new InternalNode(fw, count);
-		node.addNode(newNode, sequence.charAt(node.getLevel()));
-		node = newNode;
-		
-		if (count == sequence.length()) {
-			save.setLevel(count + 1);
-			node.addNode(save, pattern.charAt(count));
-			node.addNode(new LeafNode(sequence, count + 1), 'E');
-			return count + 1;
-		}
-
-		while (count < sequence.length() && count < pattern.length()) {
-			if (pattern.charAt(count) == sequence.charAt(count)) {
-				InternalNode temp = new InternalNode(fw, count);
-				node.addNode(temp, sequence.charAt(count));
-				node = temp;
-				count++;
-			} else {
-				save.setLevel(count + 1);
-				node.addNode(save, pattern.charAt(count));
-				node.addNode(new LeafNode(sequence, count + 1), sequence.charAt(count));
-				return count + 1;
-			}
-		}
-		if (count == sequence.length()) {
-			save.setLevel(count + 1);
-			node.addNode(save, pattern.charAt(count));
-			node.addNode(new LeafNode(sequence, count + 1), 'E');
-		}
-		else if (count == pattern.length()) {
-			save.setLevel(count + 1);
-			node.addNode(new LeafNode(sequence, count + 1), sequence.charAt(count));
-			node.addNode(save, 'E');
-		}
-		return count;
 	}
 
 	/**
